@@ -28,6 +28,7 @@
               toolchain
               trunk
               wasm-bindgen-cli
+              binaryen
             ];
           };
       };

@@ -1,4 +1,8 @@
+// #[global_allocator]
+// static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy::math::vec3;
 
 const BACKGROUND_COLOR: Color = Color::rgb(0.9, 0.9, 0.9);
 
