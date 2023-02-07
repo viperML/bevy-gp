@@ -10,5 +10,6 @@ opt-level = 'z'
 
 [dependencies]
 bevy = "0.9.1"
+console_error_panic_hook = "0.1.7"
 vec3 = "0.2.1"
 wasm-bindgen = "=0.2.84"

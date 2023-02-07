@@ -196,6 +196,7 @@ name = "bevy-gp"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "console_error_panic_hook",
  "vec3",
  "wasm-bindgen",
 ]
