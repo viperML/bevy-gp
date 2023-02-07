@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     oxalica-rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,6 +26,8 @@
             RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
             packages = [
               toolchain
+              trunk
+              wasm-bindgen-cli
             ];
           };
       };

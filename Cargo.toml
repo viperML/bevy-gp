@@ -11,3 +11,4 @@ opt-level = 'z'
 [dependencies]
 bevy = "0.9.1"
 vec3 = "0.2.1"
+wasm-bindgen = "=0.2.84"
