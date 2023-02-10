@@ -13,9 +13,8 @@ codegen-units = 1
 
 [dependencies]
 console_error_panic_hook = "0.1.7"
-# vec3 = "0.2.1"
 wasm-bindgen = "=0.2.84"
-wee_alloc = "0.4.5"
+web-sys = "0.3.61"
 
 [dependencies.bevy]
 version = "0.9.1"
