@@ -3,7 +3,8 @@ channel = "stable"
 components = [
     "rustfmt",
     "rust-analyzer",
-    "rust-src"
+    "rust-src",
+    "clippy"
 ]
 targets = [
     "wasm32-unknown-unknown",

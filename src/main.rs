@@ -2,8 +2,7 @@ use bevy::{prelude::*, sprite::MaterialMesh2dBundle, time::FixedTimestep};
 use bevy_asset::AssetServer;
 use bevy_particle_systems::*;
 
-#[cfg(target_arch = "wasm32")]
-use web_sys::console;
+
 
 use bevy_web_asset::WebAssetPlugin;
 
@@ -98,7 +97,7 @@ fn move_particle(mut query: Query<(&mut Transform, &mut StateVector)>) {
         ];
 
         for i in 0..4 {
-            x[i] = x[i] + g[i] * SIM_RATE * 5.0;
+            x[i] += g[i] * SIM_RATE * 5.0;
         }
 
         transform.translation.x = x[0] * 30.0;
