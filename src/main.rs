@@ -1,6 +1,3 @@
-use std::iter::zip;
-
-use bevy::math::vec3;
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle, time::FixedTimestep};
 use bevy_asset::AssetServer;
 use bevy_particle_systems::*;
@@ -10,8 +7,8 @@ use web_sys::console;
 
 use bevy_web_asset::WebAssetPlugin;
 
-const BACKGROUND_COLOR: Color = Color::rgb(0.9, 0.9, 0.9);
-const TIME_STEP: f32 = 1.0 / 60.0;
+
+const SIM_RATE: f32 = 1.0 / 200.0;
 
 #[derive(Component)]
 struct Particle;
@@ -33,7 +30,7 @@ fn main() {
         .add_plugin(ParticleSystemPlugin::default())
         .add_system_set(
             SystemSet::new()
-                .with_run_criteria(FixedTimestep::step(TIME_STEP as f64))
+                .with_run_criteria(FixedTimestep::step(SIM_RATE as f64))
                 .with_system(move_particle),
         )
         .run();
@@ -59,30 +56,31 @@ fn setup(
             ..default()
         }).insert(ParticleSystemBundle {
             particle_system: ParticleSystem {
-                max_particles: 500,
-                emitter_shape: bevy_particle_systems::EmitterShape::CircleSegment {
-                    opening_angle: std::f32::consts::PI * 0.25,
-                    direction_angle: std::f32::consts::PI,
-                    radius: 0.0.into(),
-                },
+                max_particles: 500_000,
+                // emitter_shape: bevy_particle_systems::EmitterShape::CircleSegment {
+                //     opening_angle: std::f32::consts::PI * 0.25,
+                //     direction_angle: std::f32::consts::PI,
+                //     radius: 0.0.into(),
+                // },
+                emitter_shape: bevy_particle_systems::EmitterShape::Line { length: 1.0, angle: JitteredValue { value: 0.0, jitter_range: None } },
                 texture: ParticleTexture::Sprite(asset_server.load("https://media.githubusercontent.com/media/abnormalbrain/bevy_particle_systems/main/assets/px.png")),
-                spawn_rate_per_second: 35.0.into(),
-                initial_speed: JitteredValue::jittered(25.0, 0.0..5.0),
+                spawn_rate_per_second: 50.0.into(),
+                initial_speed: JitteredValue { value: 0.0, jitter_range: None},
                 acceleration: 0.0.into(),
-                lifetime: JitteredValue::jittered(3.0, -2.0..2.0),
+                lifetime: JitteredValue::jittered(10.0, -2.0..2.0),
                 color: ColorOverTime::Gradient(Gradient::new(vec![
                     ColorPoint::new(Color::GREEN, 0.0),
                     ColorPoint::new(Color::rgba(0.0, 0.0, 0.0, 0.0), 1.0),
                 ])),
                 looping: true,
                 system_duration_seconds: 10.0,
-                space: ParticleSpace::Local,
-                scale: 8.0.into(),
+                space: ParticleSpace::World,
+                scale: 2.0.into(),
                 rotation_speed: JitteredValue::jittered(0.0, -6.0..0.0),
                 ..ParticleSystem::default()
             },
             // transform: Transform::from_xyz(-100.0, 50.0, 0.0),
-            transform: Transform::from_translation(Vec3::new(-100., 0., 0.)),
+            // transform: Transform::from_translation(Vec3::new(-100., 0., 0.)),
             ..ParticleSystemBundle::default()
         }).insert(Playing);
 }
@@ -100,7 +98,7 @@ fn move_particle(mut query: Query<(&mut Transform, &mut StateVector)>) {
         ];
 
         for i in 0..4 {
-            x[i] = x[i] + g[i] * TIME_STEP; // TODO dt
+            x[i] = x[i] + g[i] * SIM_RATE * 5.0;
         }
 
         transform.translation.x = x[0] * 30.0;
