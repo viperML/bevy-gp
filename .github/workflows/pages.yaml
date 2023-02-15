@@ -11,7 +11,7 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
 
-      - uses: jetli/trunk-action@v0.4
+      - uses: jetli/trunk-action@v0.4.0
 
       - uses: actions/checkout@v3
 
