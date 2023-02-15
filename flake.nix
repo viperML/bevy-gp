@@ -29,6 +29,12 @@
               trunk
               wasm-bindgen-cli
               binaryen
+
+              # pkg-config
+              # wayland
+              # libxkbcommon
+              # systemd
+              # libffi
             ];
           };
       };

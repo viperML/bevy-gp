@@ -1,6 +1,11 @@
+use std::iter::zip;
+
 use bevy::math::vec3;
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle, time::FixedTimestep};
+use bevy_asset::AssetServer;
 use bevy_particle_systems::*;
+
+#[cfg(target_arch = "wasm32")]
 use web_sys::console;
 
 const BACKGROUND_COLOR: Color = Color::rgb(0.9, 0.9, 0.9);
@@ -35,6 +40,7 @@ fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
     commands.spawn(Camera2dBundle::default());
 
@@ -48,31 +54,59 @@ fn setup(
         StateVector(vec![-2.0, 0.0, 0.0, 1.0, 0.0]),
     ));
 
-    // commands.spawn(ParticleSystemBundle {
-    //     particle_system: ParticleSystem {
-    //         max_particles: 10,
-    //         spawn_rate_per_second: 25.0.into(),
-    //         initial_speed: JitteredValue {
-    //             value: 0.0,
-    //             jitter_range: None,
-    //         },
-    //         lifetime: JitteredValue {
-    //             value: 8.0,
-    //             jitter_range: None,
-    //         },
-    //     },
-    //     ..ParticleSystemBundle::default()
-    // });
+    commands.spawn((
+        StateVector(vec![-2.0, 0.0, 0.0, 1.0, 0.0]),
+        ParticleSystemBundle {
+            particle_system: ParticleSystem {
+                max_particles: 500,
+                emitter_shape: bevy_particle_systems::EmitterShape::CircleSegment {
+                    opening_angle: std::f32::consts::PI * 0.25,
+                    direction_angle: std::f32::consts::PI,
+                    radius: 0.0.into(),
+                },
+                texture: ParticleTexture::Sprite(asset_server.load("px.png")),
+                spawn_rate_per_second: 35.0.into(),
+                initial_speed: JitteredValue::jittered(25.0, 0.0..0.0),
+                acceleration: 0.0.into(),
+                lifetime: JitteredValue::jittered(3.0, -2.0..2.0),
+                color: ColorOverTime::Gradient(Gradient::new(vec![
+                    ColorPoint::new(Color::GREEN, 0.0),
+                    ColorPoint::new(Color::rgba(0.0, 0.0, 0.0, 0.0), 1.0),
+                ])),
+                looping: true,
+                system_duration_seconds: 10.0,
+                space: ParticleSpace::Local,
+                scale: 8.0.into(),
+                rotation_speed: JitteredValue::jittered(0.0, -6.0..0.0),
+                ..ParticleSystem::default()
+            },
+            ..ParticleSystemBundle::default()
+        },
+    ));
 }
 
 fn move_particle(mut query: Query<(&mut Transform, &mut StateVector)>) {
-    for (mut transform, mut state_vector) in &mut query {
-        let transfer_params: [f64; 10] = [0.6, 10.0, 1.5, 0.5, 3.8, 28.0, 0.2, 0.19, 0.9, 0.6];
+    for (mut transform, mut x) in &mut query {
+        // Transfer parameters
+        let a: [f32; 11] = [0.6, 10.0, 1.5, 1.5, 0.5, 3.8, 28.0, 0.2, 0.19, 0.9, 0.6];
 
-        // let transfer = [
-        //     transfer_params[0]*state_vector[]
-        // ];
+        let g: [f32; 5] = [
+            a[0] * x[0] - a[1] * x[1] + a[2] * x[2] + a[3] * x[3] - a[10] * x[4],
+            a[4] * x[0] - a[5] * f32::atan(a[6] * x[1]),
+            -a[7] * x[0] - a[3] * x[3],
+            a[8] * x[2] - a[0] * x[4],
+            a[9] * x[4],
+        ];
 
+        let msg = format!("{:?}", g);
+        // console::log_1(&msg.into());
+
+        for i in 0..4 {
+            x[i] = x[i] + g[i] * TIME_STEP; // TODO dt
+        }
+
+        transform.translation.x = x[0] * 30.0;
+        transform.translation.y = x[1] * 30.0;
     }
     // for (mut transform, velocity) in &mut query {
     //     transform.translation.x += velocity.x * TIME_STEP;

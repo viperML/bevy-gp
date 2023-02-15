@@ -16,6 +16,7 @@ console_error_panic_hook = "0.1.7"
 wasm-bindgen = "=0.2.84"
 web-sys = "0.3.61"
 bevy_particle_systems = "0.8.0"
+bevy_asset = "0.9.1"
 
 [dependencies.bevy]
 version = "0.9.1"
@@ -39,4 +40,5 @@ features = [
     # "vorbis",
     # "x11",
     # "filesystem_watcher",
+    "wayland"
 ]
