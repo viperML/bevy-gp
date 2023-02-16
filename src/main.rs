@@ -2,10 +2,7 @@ use bevy::{prelude::*, sprite::MaterialMesh2dBundle, time::FixedTimestep};
 use bevy_asset::AssetServer;
 use bevy_particle_systems::*;
 
-
-
 use bevy_web_asset::WebAssetPlugin;
-
 
 const SIM_RATE: f32 = 1.0 / 200.0;
 
@@ -24,6 +21,7 @@ fn main() {
 
     App::new()
         .add_plugin(WebAssetPlugin::default())
+        .add_plugin(bevy_web_resizer::Plugin)
         .add_plugins(DefaultPlugins.build().disable::<AssetPlugin>())
         .add_startup_system(setup)
         .add_plugin(ParticleSystemPlugin::default())
